@@ -74,8 +74,8 @@ class Phase03C1FirestoreSecurityHardeningTest {
         // /config/app: authenticated read, admin write
         assertTrue(rulesContent.contains("match /config/app {\n      allow read: if isAuthenticated();"))
 
-        // /config/search_order: authenticated read, admin write
-        assertTrue(rulesContent.contains("match /config/search_order {\n      allow read: if isAuthenticated();"))
+        // /config/search_order: public read for global extension control per Phase 05H/05J, admin write
+        assertTrue(rulesContent.contains("match /config/search_order {\n      allow read: if true;"))
 
         // Catch-all must deny
         assertTrue(rulesContent.contains("match /config/{document=**} {\n      allow read, write: if false;\n    }"))

@@ -38,6 +38,17 @@ class FirebaseFirestoreManagedExtensionDataSource(
         var managedFailure: Throwable? = null
         var managedDocCount = 0
 
+        // Ensure active auth session exists (e.g. for guest users to satisfy production Firestore rules)
+        try {
+            val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+            if (auth.currentUser == null) {
+                auth.signInAnonymously().await()
+                Phase05GLogger.log("AUTH", "bootstrap", "Anonymous session established for extension sync: uid=${auth.currentUser?.uid}")
+            }
+        } catch (e: Exception) {
+            Phase05GLogger.log("AUTH", "bootstrap", "Auth check/anonymous sign-in note: ${e.message}")
+        }
+
         // 1. Fetch from canonical managed_extensions collection
         try {
             val managedSnap = firestore.collection(COLLECTION_PATH).get().await()

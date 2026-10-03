@@ -29,6 +29,13 @@ class FirebaseSearchOrderDataSource(
 
     override suspend fun fetchSearchOrder(): SearchOrder? {
         return try {
+            try {
+                val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+                if (auth.currentUser == null) {
+                    auth.signInAnonymously().await()
+                }
+            } catch (_: Exception) {}
+
             val firestore = firestoreProvider()
             val snapshot = firestore.collection(CONFIG_COLLECTION)
                 .document(SEARCH_ORDER_DOC)

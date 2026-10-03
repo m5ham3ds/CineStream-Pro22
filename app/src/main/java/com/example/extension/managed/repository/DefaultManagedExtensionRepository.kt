@@ -87,7 +87,7 @@ class DefaultManagedExtensionRepository(
                         "repo",
                         "All ${dtos.size} remote documents rejected; falling back to healthy cache / bundled candidates"
                     )
-                    val cachedFallback = cache.getCached()
+                    val cachedFallback = cache.getLastKnownGood()
                     if (cachedFallback != null && cachedFallback.isNotEmpty()) {
                         return@withContext Result.success(cachedFallback.map { ext ->
                             ext.copy(userEnabled = userPreferences.isExtensionEnabled(ext.id))
@@ -173,7 +173,7 @@ class DefaultManagedExtensionRepository(
                 "repo",
                 "Remote fetch failed: ${remoteResult.exceptionOrNull()?.message}; attempting fallback"
             )
-            val cachedFallback = cache.getCached()
+            val cachedFallback = cache.getLastKnownGood()
             if (cachedFallback != null && cachedFallback.isNotEmpty()) {
                 val updatedWithPreferences = cachedFallback.map { ext ->
                     ext.copy(userEnabled = userPreferences.isExtensionEnabled(ext.id))

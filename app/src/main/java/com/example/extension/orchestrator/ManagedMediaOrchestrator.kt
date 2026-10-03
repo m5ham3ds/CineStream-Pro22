@@ -84,7 +84,7 @@ class ManagedMediaOrchestrator(
     val managedExtensionsFlow: StateFlow<List<ManagedExtension>> = registry.extensionsFlow
 
     private val _globalConfigState = kotlinx.coroutines.flow.MutableStateFlow(
-        if (cache.getCached()?.isNotEmpty() == true) com.example.extension.managed.model.GlobalExtensionConfigState.READY
+        if (cache.getLastKnownGood()?.isNotEmpty() == true) com.example.extension.managed.model.GlobalExtensionConfigState.READY
         else com.example.extension.managed.model.GlobalExtensionConfigState.REMOTE_SYNC_PENDING
     )
     val globalConfigState: StateFlow<com.example.extension.managed.model.GlobalExtensionConfigState> = _globalConfigState
@@ -372,7 +372,7 @@ class ManagedMediaOrchestrator(
             val registry = ManagedExtensionRegistry.INSTANCE
 
             // Pre-seed from last-known-good cache if present to respect past Admin disable states
-            val cachedCatalog = cache.getCached()
+            val cachedCatalog = cache.getLastKnownGood()
             val existing = registry.getAllExtensions()
             if (cachedCatalog != null && cachedCatalog.isNotEmpty()) {
                 registry.setExtensions(cachedCatalog)
